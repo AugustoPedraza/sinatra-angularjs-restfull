@@ -7,3 +7,4 @@ gem 'data_mapper',        '1.2.0'
 gem 'dm-mysql-adapter',   '1.2.0'
 
 gem 'shotgun', '0.9'
+gem 'bcrypt'
