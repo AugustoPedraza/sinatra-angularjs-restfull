@@ -1,27 +1,19 @@
-require 'sinatra'
-require 'json'
-require 'dm-mysql-adapter'
-require 'data_mapper'
+require 'bundler/setup'
+
+require 'sinatra/base'
 require 'sinatra/config_file'
 
-config_file 'config.yml'
+require 'json'
 
-#Setup datamapper
-DataMapper.setup(:default, settings.database_url)
+require_relative 'routes/init'
 
-#require all files from /model
-Dir[File.join(File.dirname(__FILE__), 'model/*.rb')].each { |f| require f }
+class EcommerceApp < Sinatra::Base
+  register Sinatra::ConfigFile
 
-# Finalize the DataMapper models.
-DataMapper.finalize
+  use Sample
 
-# Tell DataMapper to update the database according to the definitions above.
-DataMapper.auto_upgrade!
+  config_file 'config.yml'
 
-before '/api/*' do
-  content_type :json
-end
-
-get '/api/hello' do
-  { msg: 'Hello World!'}.to_json
+  # start the server if ruby file executed directly
+  run! if __FILE__ == $0
 end
