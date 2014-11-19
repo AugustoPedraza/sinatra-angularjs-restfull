@@ -1,0 +1,2 @@
+development: &common_settings
+  database_url: mysql://root:root@localhost/ecommerce_db
