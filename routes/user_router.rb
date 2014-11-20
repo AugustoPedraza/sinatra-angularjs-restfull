@@ -1,4 +1,4 @@
-class UserRoute < Sinatra::Base
+class UserRouter < Sinatra::Base
   before '/api/*' do
     content_type :json
   end
