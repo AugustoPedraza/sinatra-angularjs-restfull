@@ -21,6 +21,11 @@ class EcommerceApp < Sinatra::Base
   use ProductRouter
 
 
+  get '/' do
+    erb :index
+  end
+
+
   # start the server if ruby file executed directly
   run! if __FILE__ == $0
 end
