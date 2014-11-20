@@ -18,7 +18,7 @@ class EcommerceApp < Sinatra::Base
 
   use UserRouter
   use SessionRouter
-  use Sample
+  use ProductRouter
 
 
   # start the server if ruby file executed directly
