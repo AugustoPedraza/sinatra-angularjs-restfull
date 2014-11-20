@@ -9,6 +9,10 @@ class ApiKey
 
   before :create, :generate_token
 
+  def self.valid_token?(token = '')
+    token != '' && count(:conditions => ['token = ?', token]) == 1
+  end
+
 private
   def generate_token
     begin
