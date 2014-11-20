@@ -17,6 +17,7 @@ class EcommerceApp < Sinatra::Base
   require_relative 'routes/init'
 
   use UserRouter
+  use SessionRouter
   use Sample
 
 
