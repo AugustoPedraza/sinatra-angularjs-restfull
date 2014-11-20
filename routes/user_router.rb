@@ -3,7 +3,7 @@ class UserRouter < Sinatra::Base
     content_type :json
   end
 
-  post '/api/users/' do
+  post '/api/users' do
     user_credentials_params = JSON.parse(request.body.read)
     user  = User.new(user_credentials_params)
 
