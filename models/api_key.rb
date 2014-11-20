@@ -13,6 +13,6 @@ private
   def generate_token
     begin
       self.token = SecureRandom.hex
-    end while self.class.count(:conditions => [ 'access_token = ?', access_token]) > 0 #To avoid collission
+    end while self.class.count(:conditions => [ 'token = ?', token]) > 0 #To avoid collission
   end
 end

@@ -8,14 +8,9 @@ class UserRoute < Sinatra::Base
     user  = User.new(user_credentials_params)
 
     if user.save
-      response.headers['Authorization'] = ApiKey.create
+      response.headers['Authorization'] = ApiKey.create.token
       201 #Created resource
     else
-      puts "="*50
-      user.errors.each do |e|
-        p e
-      end
-      puts "="*50
       [400, { errors: user.errors.map(&:to_s) }.to_json]
     end
   end
