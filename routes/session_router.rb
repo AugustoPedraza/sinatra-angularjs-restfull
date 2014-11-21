@@ -3,7 +3,7 @@ class SessionRouter < Sinatra::Base
     content_type :json
   end
 
-  post '/api/sessions/' do
+  post '/api/sessions' do
     user_credentials_params = JSON.parse(request.body.read, symbolize_names: true)
 
     if User.valid_credentials?(user_credentials_params[:username], user_credentials_params[:password])

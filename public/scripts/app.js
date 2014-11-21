@@ -6,6 +6,10 @@ EcommerceApp.config(['$routeProvider', function($routeProvider) {
       templateUrl: 'scripts/templates/signup.html',
       controller: 'UsersController'
     }).
+    when('/signin', {
+      templateUrl: 'scripts/templates/signin.html',
+      controller: 'UsersController'
+    }).
     when('/', {
       templateUrl: 'scripts/templates/welcome.html',
       controller: 'WelcomeController'
@@ -27,11 +31,15 @@ EcommerceApp.factory('User', ['$resource', function($resource) {
   return $resource('/api/users/:id');
 }]);
 
+EcommerceApp.factory('Session', ['$resource', function($resource) {
+  return $resource('/api/sessions/:id');
+}]);
+
 EcommerceApp.factory('Product', ['$resource', function($resource) {
   return $resource('/api/products/:id');
 }]);
 
-EcommerceApp.controller('UsersController', ['$scope', 'User', '$window', '$location', function($scope, User, $window, $location) {
+EcommerceApp.controller('UsersController', ['$scope', 'User', 'Session', '$window', '$location', function($scope, User, Session, $window, $location) {
   $scope.message = 'Hello world!';
 
   $scope.signup = function(form) {
@@ -47,6 +55,25 @@ EcommerceApp.controller('UsersController', ['$scope', 'User', '$window', '$locat
       $location.path('/products');
     }, function(response){
       var error = "Error to create the user. Please check the following errors: \n";
+
+      angular.forEach(response.data.errors, function(e) {
+        error += e + "\n";
+      });
+
+      alert(error);
+    });
+  };
+
+  $scope.signin = function(form) {
+    var session = new Session();
+    session.username               = form.username;
+    session.password               = form.password;
+
+    session.$save(function(session, responseHeaders) {
+      $window.sessionStorage.token = responseHeaders().authorization;
+      $location.path('/products');
+    }, function(response){
+      var error = "Error to sign in. Please check the following errors: \n";
 
       angular.forEach(response.data.errors, function(e) {
         error += e + "\n";
