@@ -10,7 +10,7 @@ class SessionRouter < Sinatra::Base
       response.headers['Authorization'] = ApiKey.create.token
       201 #Created resource
     else
-      [406, { errors: ["username or password invalid."] }.to_json]
+      [422, { errors: ["username or password invalid."] }.to_json]
     end
   end
 

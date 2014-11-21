@@ -1,6 +1,32 @@
 var EcommerceApp = angular.module('EcommerceApp', ['ngRoute', 'ngResource']);
 
-EcommerceApp.config(['$routeProvider', function($routeProvider) {
+EcommerceApp.factory('SessionInjector', ["$window", "$location", "$q", function($window, $location, $q) {
+  return {
+    request: function(config) {
+      var token = $window.sessionStorage.token;
+      config.headers['Authorization'] = token && token !== "undefined" ? token : '';
+
+      return config;
+    },
+    requestError: function(config) {
+      return config;
+    },
+    responseError: function(response) {
+      if (response.status == 401) {
+        alert("You need to be logged.");
+        $location.path("/");
+      }
+
+      if(response.status == 422) {
+        return $q.reject(response);
+      }
+
+      return response;
+    }
+  };
+}]);
+
+EcommerceApp.config(['$routeProvider', '$httpProvider', function($routeProvider, $httpProvider) {
   $routeProvider.
     when('/signup', {
       templateUrl: 'scripts/templates/signup.html',
@@ -21,6 +47,8 @@ EcommerceApp.config(['$routeProvider', function($routeProvider) {
     otherwise({
       redirectTo: '/'
     });
+
+  $httpProvider.interceptors.push('SessionInjector');
 }]);
 
 EcommerceApp.run(['$http', '$window', function($http, $window) {
@@ -54,13 +82,20 @@ EcommerceApp.controller('UsersController', ['$scope', 'User', 'Session', '$windo
       alert('Success user creation!');
       $location.path('/products');
     }, function(response){
-      var error = "Error to create the user. Please check the following errors: \n";
+      if(response.status == 500) {
+        alert("Something is working wrong. Please try it later.");
+        return;
+      }
 
-      angular.forEach(response.data.errors, function(e) {
-        error += e + "\n";
-      });
+      if(response.status == 422) {
+        var error = "Error to create the user. Please check the following errors: \n";
 
-      alert(error);
+        angular.forEach(response.data.errors, function(e) {
+          error += e + "\n";
+        });
+
+        alert(error);
+      }
     });
   };
 
@@ -72,14 +107,21 @@ EcommerceApp.controller('UsersController', ['$scope', 'User', 'Session', '$windo
     session.$save(function(session, responseHeaders) {
       $window.sessionStorage.token = responseHeaders().authorization;
       $location.path('/products');
-    }, function(response){
-      var error = "Error to sign in. Please check the following errors: \n";
+    }, function(response) {
+      if(response.status == 500) {
+        alert("Some is working wrong. Please try it later.");
+        return;
+      }
 
-      angular.forEach(response.data.errors, function(e) {
-        error += e + "\n";
-      });
+      if(response.status == 422) {
+        var error = "Error to sign in. Please check the following errors: \n";
 
-      alert(error);
+        angular.forEach(response.data.errors, function(e) {
+          error += e + "\n";
+        });
+
+        alert(error);
+      }
     });
   };
 }]);
@@ -92,8 +134,7 @@ EcommerceApp.controller('ProductsController', ['$scope', 'Product', function($sc
   $scope.message = 'Here should be the product list.';
 
   $scope.products = Product.query(function(data) {
-    debugger;
-  }, function(response){
-    debugger;
+  }, function(response) {
+    alert("Error to list products");
   });
 }]);

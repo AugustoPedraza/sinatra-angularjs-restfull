@@ -1,7 +1,7 @@
 class ProductRouter < Sinatra::Base
   before '/api/products' do
     token = request.env["Http_Authorization".upcase]
-    halt 401, { error: "Invalid token." }.to_json unless ApiKey.valid_token?(token)
+    halt 401, [].to_json unless ApiKey.valid_token?(token)
   end
 
   get '/api/products' do
